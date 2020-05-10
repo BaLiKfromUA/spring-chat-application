@@ -12,7 +12,6 @@ import java.util.List;
 public class ChatRestController {
     private final MessageRepo messageRepo;
 
-
     @Autowired
     public ChatRestController(MessageRepo messageRepo) {
         this.messageRepo = messageRepo;
