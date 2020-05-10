@@ -2,6 +2,7 @@ package com.balik.chat.listener;
 
 import com.balik.chat.model.Message;
 import com.balik.chat.model.MessageType;
+import com.balik.chat.repo.MessageRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,12 @@ public class WebSocketEventListener {
 
     private final SimpMessageSendingOperations messagingTemplate;
 
+    private final MessageRepo messageRepo;
+
     @Autowired
-    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate) {
+    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, MessageRepo messageRepo) {
         this.messagingTemplate = messagingTemplate;
+        this.messageRepo = messageRepo;
     }
 
     @EventListener
@@ -37,12 +41,14 @@ public class WebSocketEventListener {
 
         String username = (String) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("username");
 
-        if(username != null) {
+        if (username != null) {
             logger.info("User Disconnected : " + username);
 
             Message chatMessage = new Message();
             chatMessage.setType(MessageType.LEAVE);
             chatMessage.setSender(username);
+
+            messageRepo.save(chatMessage);
 
             messagingTemplate.convertAndSend("/chat/public", chatMessage);
         }

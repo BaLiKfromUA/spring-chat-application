@@ -1,11 +1,33 @@
 package com.balik.chat.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "message")
 public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column
     private MessageType type;
+
+    @Column
     private String content;
+
+    @Column
     private String sender;
 
     public Message() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public MessageType getType() {
